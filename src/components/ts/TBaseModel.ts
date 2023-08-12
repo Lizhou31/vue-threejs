@@ -2,6 +2,7 @@ import { Mesh, CylinderGeometry, MeshPhongMaterial } from "three"
 
 interface model_base {
     construct_Mesh(): Array<Mesh>;
+    caculate_and_compare_point() : any;
 }
 
 export class cylinder_base_model implements model_base {
@@ -14,11 +15,11 @@ export class cylinder_base_model implements model_base {
         if (params.length > 0) {
             while (index < params.length) {
                 let CylinderHeight = params[index++]
-                let CylinderTopRadius = params[index++]
-                let CylinderButtomRadius = params[index++]
+                let CylinderTopRadius = params[index++] + 0.5
+                let CylinderButtomRadius = params[index++] + 0.5
                 this.CylinderArray.push(
                     new CylinderGeometry(CylinderTopRadius, CylinderButtomRadius, CylinderHeight, 32)
-                        .translate(0, this.caculate_height(CylinderHeight), 0))
+                        .translate(0, this.caculate_y_offset(CylinderHeight), 0))
 
             }
         }
@@ -27,7 +28,7 @@ export class cylinder_base_model implements model_base {
         }
     }
 
-    caculate_height(current_height: number): number {
+    caculate_y_offset(current_height: number): number {
         let height: number = 0;
         for (let i = 0; i < this.CylinderArray.length; i++) {
             // console.log(this.params[i*3])
@@ -49,13 +50,21 @@ export class cylinder_base_model implements model_base {
         })
         return allBaseObject;
     }
+
+    caculate_and_compare_point() {
+        
+    }
 }
 
 export class import_model implements model_base {
     // TODO : 用以引入的 Model
 
     construct_Mesh() {
+        
+    }
 
+    caculate_and_compare_point() {
+        
     }
 }
 

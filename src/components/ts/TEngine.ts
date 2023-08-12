@@ -23,11 +23,6 @@ export class ThreeEngine {
         renderer.setClearColor('rgb(195,234,245)')
 
         let orbitControls = new OrbitControls(camera, renderer.domElement)
-        orbitControls.mouseButtons = {
-            LEFT: null,
-            MIDDLE: MOUSE.DOLLY,
-            RIGHT:MOUSE.ROTATE
-        }
 
         let animate = () => {
             renderer.render(scene,camera)
