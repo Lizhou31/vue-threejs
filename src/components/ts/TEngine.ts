@@ -48,11 +48,11 @@ export class ThreeEngine {
         renderer.domElement.addEventListener("click", event => {
             raycaster.setFromCamera(mouse, camera)
             const intersection = raycaster.intersectObjects(scene.children)
-            console.log(intersection)
+            // console.log(intersection)
             try {
                 if (intersection[0].object.geometry.type === "SphereGeometry") {
                     let point = intersection[0].object.geometry.boundingSphere.center;
-                    let v = basemodel.search_points(point.x, point.y, point.z, 7)
+                    let v = basemodel.search_points(point.x, point.y, point.z, 5)
                     camera.position.set(v.x, v.y, v.z)
                     cameracontrol.target.set(point.x, point.y, point.z,)
                 }

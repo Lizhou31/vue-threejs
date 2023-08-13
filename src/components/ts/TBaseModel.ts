@@ -21,8 +21,8 @@ export class cylinder_model implements model_base {
         if (params.length > 0) {
             while (index < params.length) {
                 let CylinderHeight = params[index++]
-                let CylinderTopRadius = params[index++] + 0.5
-                let CylinderButtomRadius = params[index++] + 0.5
+                let CylinderTopRadius = params[index++]
+                let CylinderButtomRadius = params[index++]
                 let y_offset = this.caculate_y_offset()
                 this.CylinderArray.push(
                     new CylinderGeometry(CylinderTopRadius, CylinderButtomRadius, CylinderHeight, 32)
@@ -85,7 +85,7 @@ export class cylinder_model implements model_base {
         let c = new Cylindrical().setFromCartesianCoords(pointX, pointY, pointZ)
         let c_new = new Cylindrical(c.radius + distance, c.theta, c.y - camera_y_offset)
         let v = new Vector3().setFromCylindrical(c_new)
-        console.log(v.x, v.y, v.z)
+        // console.log(v.x, v.y, v.z)
         return v
     }
 }
