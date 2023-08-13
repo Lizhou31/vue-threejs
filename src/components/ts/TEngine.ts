@@ -4,7 +4,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 export class ThreeEngine {
     dom = null; // mounted dom
     scene = null;
-    orbitControls = null;
+    camera = null;
+    cameracontrol = null;
     constructor(dom){
 
         // create renderer
@@ -22,16 +23,19 @@ export class ThreeEngine {
         renderer.render(scene,camera)
         renderer.setClearColor('rgb(195,234,245)')
 
-        let orbitControls = new OrbitControls(camera, renderer.domElement)
+        let cameracontrol = new OrbitControls(camera, renderer.domElement)
 
         let animate = () => {
             renderer.render(scene,camera)
+            cameracontrol.update()
             requestAnimationFrame(animate)
         }
         animate()
 
         this.dom = dom
         this.scene = scene
+        this.camera = camera
+        this.cameracontrol = cameracontrol
     }
 
     addObject(...object){
