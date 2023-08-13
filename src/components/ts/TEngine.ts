@@ -24,12 +24,15 @@ export class ThreeEngine {
         renderer.render(scene, camera)
         renderer.setClearColor('rgb(195,234,245)')
 
+        /* 軌道控制器 */
         let cameracontrol = new OrbitControls(camera, renderer.domElement)
-        cameracontrol.mouseButtons = {
+        cameracontrol.mouseButtons = {      // 取消滑鼠左鍵用途
             LEFT: null,
             MIDDLE: MOUSE.DOLLY,
             RIGHT: MOUSE.ROTATE
         }
+
+        /* 射線，用於建立滑鼠點擊功能 */
         let raycaster = new Raycaster()
 
         let mouse = new Vector2()
@@ -45,14 +48,14 @@ export class ThreeEngine {
             mouse.y = -mouseY * 2 / mouseHeight + 1
         })
 
-        renderer.domElement.addEventListener("click", event => {
+        renderer.domElement.addEventListener("click", () => {
             raycaster.setFromCamera(mouse, camera)
             const intersection = raycaster.intersectObjects(scene.children)
             // console.log(intersection)
             try {
                 if (intersection[0].object.geometry.type === "SphereGeometry") {
                     let point = intersection[0].object.geometry.boundingSphere.center;
-                    let v = basemodel.search_points(point.x, point.y, point.z, 5)
+                    let v = basemodel.search_points(point.x, point.y, point.z, 10)
                     camera.position.set(v.x, v.y, v.z)
                     cameracontrol.target.set(point.x, point.y, point.z,)
                 }
@@ -63,6 +66,7 @@ export class ThreeEngine {
 
         })
 
+        /* 渲染 */
         let animate = () => {
             renderer.render(scene, camera)
             cameracontrol.update()
