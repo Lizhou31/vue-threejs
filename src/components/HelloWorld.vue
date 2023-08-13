@@ -18,7 +18,6 @@ export default {
     };
   },
   mounted() {
-    this.ThreeEngine = new ThreeEngine(this.$refs.threeTarget)
     let leedata = new LEEData()
     let test_base_model = new BaseModel(new cylinder_model(
       [leedata.BaseHeight,
@@ -29,13 +28,7 @@ export default {
       leedata.ButtomRadius]))
     let tpoints = new TPoints(leedata.Points);
 
-    // for (let index = 0; index < leedata.Points.length;) {
-    //   this.ThreeEngine.camera.position.set(test_base_model.search_points(leedata.Points[index], leedata.Points[index + 1], leedata.Points[index + 2], 1))
-    //   index = index + 2
-    // }
-    let v = test_base_model.search_points(-3.203, 7.90868, 4.694, 5)
-    this.ThreeEngine.camera.position.set(v.x, v.y, v.z)
-    this.ThreeEngine.cameracontrol.target.set(-3.203, 7.90868, 4.694)
+    this.ThreeEngine = new ThreeEngine(this.$refs.threeTarget, test_base_model)
 
     this.ThreeEngine.addObject(...test_base_model.allBaseObject)
     this.ThreeEngine.addObject(...tpoints.allPointsObject)
