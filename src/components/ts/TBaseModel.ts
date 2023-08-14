@@ -3,7 +3,7 @@ import { Mesh, CylinderGeometry, MeshPhongMaterial, Cylindrical, Vector3 } from 
 /* base interface */
 interface model_base {
     construct_Mesh(): Array<Mesh>; // 建立 Mesh 結構體
-    caculate_and_compare_point(point_height: number): number; // 比較點在物件的哪個區域
+    caculate_and_compare_point(PointX: number, PointY: number, PointZ: number): number; // 比較點在物件的哪個區域
     getCameraPosition(pointX: number, pointY: number, pointZ: number, distance: number): Vector3; // 給出相機需要移動到的點位
 }
 
@@ -29,32 +29,32 @@ export class cylinder_model implements model_base {
                 let CylinderTopRadius = params[index++]
                 let CylinderButtomRadius = params[index++]
 
-                let y_offset = this.caculate_y_offset() // 求出每一層的起始高度
+                let y_offset = this.caculate_y_offset(CylinderHeight) // 求出每一層的起始高度
 
-                /* 建立 Mesh 實體 */
-                
+                /* 建立 各層 CylinderGeometry 實體 */
+
                 this.CylinderArray.push(
                     new CylinderGeometry(CylinderTopRadius, CylinderButtomRadius, CylinderHeight, 32)
-                        .translate(0, y_offset + 0.5 * (CylinderHeight), 0))
+                        .translate(0, y_offset, 0))
                 /* 每層高度計算方式 */
                 /*
                 * 若共 N 層，每層高度為 H_k，k = [1,N]
                 * 則第 K 層的高度偏移為 SUM(H_k) 當 k=[1,K-1]，再加上 0.5 * H_K 
-                */ 
+                */
 
                 this.record_layer_info(CylinderHeight, CylinderTopRadius, CylinderButtomRadius) // 紀錄每一層的數據
             }
         }
     }
 
-    /* 簡單計算每層累積高度 */
-    caculate_y_offset(): number {
+    /* 簡單計算每層起始高度 */
+    caculate_y_offset(current_height: number): number {
         let height: number = 0;
         for (let i = 0; i < this.CylinderArray.length; i++) {
             // console.log(this.params[i*3])
             height += this.params[i * 3]
         }
-        return height
+        return height + 0.5 * current_height
     }
 
     /* 紀錄每層資料 */
@@ -80,13 +80,13 @@ export class cylinder_model implements model_base {
     }
 
     /* 計算傳入的點在哪一層 */
-    caculate_and_compare_point(point_height: number) {
+    caculate_and_compare_point(pointX: number, PointY: number, PointZ: number) {
         let result: number = 0
 
         /* 線性比較高度 */
         // TODO: O(N), could be optimized?
-        while (point_height > 0) {
-            point_height = point_height - this.layer_Height[result]
+        while (PointY > 0) {
+            PointY = PointY - this.layer_Height[result]
             result++;
         }
 
@@ -97,19 +97,22 @@ export class cylinder_model implements model_base {
     getCameraPosition(pointX: number, pointY: number, pointZ: number, distance: number) {
 
         /* 先確定點在哪層 */
-        let layer_index = this.caculate_and_compare_point(pointY)
+        let layer_index = this.caculate_and_compare_point(pointX, pointY, pointZ)
+
+        /* 計算偏移角度 theta */
+        let theta = Math.atan((this.layer_TRadius[layer_index] - this.layer_BRadius[layer_index])
+            / this.layer_Height[layer_index])
 
         /* 計算照相機的 y 軸偏移(於圓柱座標系) */
-        let camera_y_offset = distance * Math.sin(
-            Math.atan(
-                (this.layer_TRadius[layer_index] - this.layer_BRadius[layer_index])
-                / this.layer_Height[layer_index]))
+        let camera_y_offset = distance * Math.sin(theta)
+
+        /* 計算照相機的 r 軸偏移(於圓柱座標系) */
+        let camera_r_offset = distance * Math.cos(theta)
 
         /* 將座標轉換回笛卡兒座標 */
         let c = new Cylindrical().setFromCartesianCoords(pointX, pointY, pointZ)
-        let c_new = new Cylindrical(c.radius + distance, c.theta, c.y - camera_y_offset)
+        let c_new = new Cylindrical(c.radius + camera_r_offset, c.theta, c.y - camera_y_offset)
         let v = new Vector3().setFromCylindrical(c_new)
-        // console.log(v.x, v.y, v.z)
         return v
     }
 }
@@ -124,7 +127,7 @@ export class sphere_model implements model_base {
         return allBaseObject;
     }
 
-    caculate_and_compare_point(point: number) {
+    caculate_and_compare_point(pointX: number, PointY: number, PointZ: number) {
         let result: number = 0
 
         return result
@@ -148,7 +151,7 @@ export class import_model implements model_base {
         return allBaseObject;
     }
 
-    caculate_and_compare_point(point: number) {
+    caculate_and_compare_point(pointX: number, PointY: number, PointZ: number) {
         let result: number = 0
 
         return result
