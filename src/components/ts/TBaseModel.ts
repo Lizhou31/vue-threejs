@@ -3,7 +3,7 @@ import { Mesh, CylinderGeometry, MeshPhongMaterial, Cylindrical, Vector3 } from 
 /* base interface */
 interface model_base {
     construct_Mesh(): Array<Mesh>; // 建立 Mesh 結構體
-    caculate_and_compare_point(PointX: number, PointY: number, PointZ: number): number; // 比較點在物件的哪個區域
+    calculate_and_compare_point(PointX: number, PointY: number, PointZ: number): number; // 比較點在物件的哪個區域
     getCameraPosition(pointX: number, pointY: number, pointZ: number, distance: number): Vector3; // 給出相機需要移動到的點位
 }
 
@@ -29,7 +29,7 @@ export class cylinder_model implements model_base {
                 let CylinderTopRadius = params[index++]
                 let CylinderButtomRadius = params[index++]
 
-                let y_offset = this.caculate_y_offset(CylinderHeight) // 求出每一層的起始高度
+                let y_offset = this.calculate_y_offset(CylinderHeight) // 求出每一層的起始高度
 
                 /* 建立 各層 CylinderGeometry 實體 */
 
@@ -48,7 +48,7 @@ export class cylinder_model implements model_base {
     }
 
     /* 簡單計算每層起始高度 */
-    caculate_y_offset(current_height: number): number {
+    calculate_y_offset(current_height: number): number {
         let height: number = 0;
         for (let i = 0; i < this.CylinderArray.length; i++) {
             // console.log(this.params[i*3])
@@ -80,7 +80,7 @@ export class cylinder_model implements model_base {
     }
 
     /* 計算傳入的點在哪一層 */
-    caculate_and_compare_point(pointX: number, PointY: number, PointZ: number) {
+    calculate_and_compare_point(pointX: number, PointY: number, PointZ: number) {
         let result: number = 0
 
         /* 線性比較高度 */
@@ -97,7 +97,7 @@ export class cylinder_model implements model_base {
     getCameraPosition(pointX: number, pointY: number, pointZ: number, distance: number) {
 
         /* 先確定點在哪層 */
-        let layer_index = this.caculate_and_compare_point(pointX, pointY, pointZ)
+        let layer_index = this.calculate_and_compare_point(pointX, pointY, pointZ)
 
         /* 計算偏移角度 theta */
         let theta = Math.atan((this.layer_TRadius[layer_index] - this.layer_BRadius[layer_index])
@@ -127,7 +127,7 @@ export class sphere_model implements model_base {
         return allBaseObject;
     }
 
-    caculate_and_compare_point(pointX: number, PointY: number, PointZ: number) {
+    calculate_and_compare_point(pointX: number, PointY: number, PointZ: number) {
         let result: number = 0
 
         return result
@@ -151,7 +151,7 @@ export class import_model implements model_base {
         return allBaseObject;
     }
 
-    caculate_and_compare_point(pointX: number, PointY: number, PointZ: number) {
+    calculate_and_compare_point(pointX: number, PointY: number, PointZ: number) {
         let result: number = 0
 
         return result
